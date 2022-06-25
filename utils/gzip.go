@@ -1,4 +1,4 @@
-package onefile
+package utils
 
 import (
 	"compress/gzip"
