@@ -1,3 +1,3 @@
-module github.com/LordCasser/onefile
+module multifile
 
 go 1.18
