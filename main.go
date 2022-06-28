@@ -26,12 +26,15 @@ func main() {
 	portString := fmt.Sprintf(":%d", *Port)
 	if *SSL && (crtErr == nil && keyErr == nil) {
 		if *Port == 0 {
-			portString = fmt.Sprintf(":%d", 10443)
+			portString = fmt.Sprintf(":%d", 443)
 		}
+		go func() {
+			http.ListenAndServe(":80", http.HandlerFunc(utils.Redirect))
+		}()
 		log.Fatal(http.ListenAndServeTLS(portString, "resources/tls.crt", "resources/tls.key", withGzipped))
 	} else {
 		if *Port == 0 {
-			portString = fmt.Sprintf(":%d", 8080)
+			portString = fmt.Sprintf(":%d", 80)
 		}
 		log.Fatal(http.ListenAndServe(portString, withGzipped))
 	}
