@@ -12,8 +12,8 @@ import (
 const home = "static"
 
 func main() {
-	IP := flag.String("IP", "127.0.0.1", "ip address of server, default to be 127.0.0.1")
-	SSL := flag.Bool("SSL", true, "open SSL or not, default is true")
+	//IP := flag.String("IP", "127.0.0.1", "ip address of server, default to be 127.0.0.1")
+	SSL := flag.Bool("SSL", false, "open SSL or not, default is true")
 	Port := flag.Uint("Port", 0, "port to be used, default is 443")
 	flag.Parse()
 	_, crtErr := os.Stat("resources/tls.crt")
@@ -25,12 +25,6 @@ func main() {
 	withGzipped := utils.Gzip(root)
 	portString := fmt.Sprintf(":%d", *Port)
 	if *SSL && (crtErr == nil && keyErr == nil) {
-		if *Port == 0 {
-			portString = fmt.Sprintf(":%d", 10443)
-		}
-		log.Fatal(http.ListenAndServeTLS(portString, "resources/tls.crt", "resources/tls.key", withGzipped))
-	} else if *SSL && (os.IsNotExist(crtErr) || os.IsNotExist(keyErr)) {
-		utils.CreateCert(*IP)
 		if *Port == 0 {
 			portString = fmt.Sprintf(":%d", 10443)
 		}
