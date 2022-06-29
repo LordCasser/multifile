@@ -5,6 +5,8 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"path/filepath"
+	"strings"
 )
 
 const cachePath = "cache"
@@ -37,11 +39,17 @@ func NewRoot(fsys fs.FS, fallback string, index string) *Root {
 func (t *Root) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	//log.Println("url: ", path)
-	if path[len(path)-1] == '/' {
-		path += t.Index
+	sub := strings.Split(path, "/")
+	//log.Println(sub, len(sub))
+	if len(sub) == 2 && sub[1] != "" && filepath.Ext(sub[1]) == "" {
+		path += "/" + t.Index
+	} else {
+		if path[len(path)-1] == '/' {
+			path += t.Index
+		}
 	}
 	path = path[1:]
-	//log.Println(path)
+	//log.Println("resolved path: ", path)
 	//index
 	if path == t.Index {
 		f, err := t.fs.Open(t.Index)
