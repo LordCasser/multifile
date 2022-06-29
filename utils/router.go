@@ -54,7 +54,7 @@ func (t *Root) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if path == t.Index {
 		f, err := t.fs.Open(t.Index)
 		if err != nil {
-			t.redirect(w)
+			t.nofound(w)
 			return
 		}
 		w.WriteHeader(http.StatusOK)
@@ -86,7 +86,7 @@ func (t *Root) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (t *Root) redirect(w http.ResponseWriter) {
+func (t *Root) nofound(w http.ResponseWriter) {
 	if t.fallback == "" {
 		w.WriteHeader(http.StatusNotFound)
 	} else {
@@ -111,7 +111,7 @@ func Redirect(w http.ResponseWriter, req *http.Request) {
 	if len(req.URL.RawQuery) > 0 {
 		target += "?" + req.URL.RawQuery
 	}
-	log.Printf("redirect to: %s", target)
+	log.Printf("nofound to: %s", target)
 	http.Redirect(w, req, target,
 		// see comments below and consider the codes 308, 302, or 301
 		http.StatusTemporaryRedirect)

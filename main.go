@@ -34,7 +34,7 @@ func main() {
 		log.Fatal(http.ListenAndServeTLS(portString, "resources/tls.crt", "resources/tls.key", withGzipped))
 	} else {
 		if *Port == 0 {
-			portString = fmt.Sprintf(":%d", 8080)
+			portString = fmt.Sprintf(":%d", 80)
 		}
 		log.Fatal(http.ListenAndServe(portString, withGzipped))
 	}
