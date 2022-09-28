@@ -12,30 +12,34 @@ import (
 const home = "static"
 
 func main() {
-	//IP := flag.String("IP", "127.0.0.1", "ip address of server, default to be 127.0.0.1")
 	SSL := flag.Bool("SSL", false, "open SSL or not, default is true")
 	Port := flag.Uint("Port", 0, "port to be used, default is 443")
 	flag.Parse()
 	_, crtErr := os.Stat("resources/tls.crt")
 	_, keyErr := os.Stat("resources/tls.key")
 	root := utils.NewRoot(os.DirFS(home), "404.html", "index.html")
-	//router := mux.NewRouter()
-	//router.PathPrefix("/cache/").HandlerFunc(root.CacheHandler)
-	//router.HandleFunc("/", root.ServeHttp)
+
 	withGzipped := utils.Gzip(root)
-	portString := fmt.Sprintf(":%d", *Port)
 	if *SSL && (crtErr == nil && keyErr == nil) {
 		if *Port == 0 {
-			portString = fmt.Sprintf(":%d", 443)
+			*Port = 443
 		}
-		go func() {
-			http.ListenAndServe(":80", http.HandlerFunc(utils.Redirect))
-		}()
-		log.Fatal(http.ListenAndServeTLS(portString, "resources/tls.crt", "resources/tls.key", withGzipped))
+		if *Port == 443 {
+			go func() {
+				err := http.ListenAndServe(":80", http.HandlerFunc(utils.Redirect))
+				if err != nil {
+					log.Println(err)
+				}
+			}()
+		}
+		portString := fmt.Sprintf(":%d", *Port)
+
+		log.Fatal(http.ListenAndServeTLS(portString, "resources/https.crt", "resources/https.key", nil))
 	} else {
 		if *Port == 0 {
-			portString = fmt.Sprintf(":%d", 80)
+			*Port = 80
 		}
+		portString := fmt.Sprintf(":%d", *Port)
 		log.Fatal(http.ListenAndServe(portString, withGzipped))
 	}
 }

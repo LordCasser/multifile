@@ -105,6 +105,7 @@ func (t *Root) nofound(w http.ResponseWriter) {
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
 
 }
+
 func Redirect(w http.ResponseWriter, req *http.Request) {
 	// remove/add not default ports from req.Host
 	target := "https://" + req.Host + req.URL.Path
