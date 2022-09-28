@@ -34,13 +34,14 @@ func main() {
 	init := flag.Bool("init", false, "init the environment")
 
 	flag.Parse()
-	if *init && (Port != nil || SSL != nil) {
+	if *init && (*Port != 0 || *SSL != false) {
 		log.Println("[X]Init don't need other agreements")
 		flag.PrintDefaults()
 		return
-	} else {
+	} else if *init {
 		FileCheckCreate(home)
 		FileCheckCreate(resources)
+		return
 	}
 
 	_, crtErr := os.Stat("resources/tls.crt")
