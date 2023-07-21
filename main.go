@@ -44,8 +44,8 @@ func main() {
 		return
 	}
 
-	_, crtErr := os.Stat("resources/tls.crt")
-	_, keyErr := os.Stat("resources/tls.key")
+	_, crtErr := os.Stat("resources/https.crt")
+	_, keyErr := os.Stat("resources/https.key")
 	root := utils.NewRoot(os.DirFS(home), "404.html", "index.html")
 
 	withGzipped := utils.Gzip(root)
@@ -63,7 +63,7 @@ func main() {
 		}
 		portString := fmt.Sprintf(":%d", *Port)
 
-		log.Fatal(http.ListenAndServeTLS(portString, "resources/https.crt", "resources/https.key", nil))
+		log.Fatal(http.ListenAndServeTLS(portString, "resources/https.crt", "resources/https.key", withGzipped))
 	} else {
 		if *Port == 0 {
 			*Port = 80
